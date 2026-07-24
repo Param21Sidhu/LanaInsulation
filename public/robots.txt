@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://lanainsulation.com/sitemap.xml

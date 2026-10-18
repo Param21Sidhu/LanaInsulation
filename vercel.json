@@ -1,0 +1,55 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "buildCommand": "npm run build",
+  "rewrites": [
+    {
+      "source": "/velvet-caribou-7nQ4pT9k2M",
+      "destination": "/velvet-caribou-7nQ4pT9k2M/index.html"
+    },
+    {
+      "source": "/warmth/:code",
+      "destination": "/warmth/index.html"
+    },
+    {
+      "source": "/referral-terms",
+      "destination": "/referral-terms/index.html"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/velvet-caribou-7nQ4pT9k2M(.*)",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "same-origin"
+        }
+      ]
+    },
+    {
+      "source": "/warmth(.*)",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "same-origin"
+        }
+      ]
+    },
+    {
+      "source": "/api/referrals/(.*)",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        }
+      ]
+    }
+  ]
+}

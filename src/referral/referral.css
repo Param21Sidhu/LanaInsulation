@@ -1,0 +1,802 @@
+/* ==========================================================================
+   Referral pages (sign-up + referred friend). Loaded after styles.css and
+   built on its tokens, buttons, fields and badge. Mobile-first.
+   ========================================================================== */
+
+.referral-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* The referral pages are short; a static header leaves more room on phones. */
+.referral-header {
+  position: static;
+}
+
+.referral-header .site-header__inner {
+  padding-top: 12px;
+  padding-bottom: 12px;
+}
+
+.referral-header .logo__img {
+  height: 46px;
+}
+
+.referral {
+  flex: 1;
+  padding: 28px 0 56px;
+}
+
+.referral .container {
+  max-width: 600px;
+  padding-left: 16px;
+  padding-right: 16px;
+}
+
+.referral-intro {
+  margin-bottom: 20px;
+}
+
+.referral-intro .badge {
+  margin-bottom: 14px;
+}
+
+.referral-title {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 32px;
+  line-height: 1.06;
+  letter-spacing: -0.025em;
+  margin: 0 0 12px;
+  text-wrap: balance;
+}
+
+.referral-title--sm {
+  font-size: 28px;
+  outline: none;
+}
+
+.referral-lead {
+  font-size: 17px;
+  line-height: 1.55;
+  color: var(--muted);
+  margin: 0 0 18px;
+  text-wrap: pretty;
+}
+
+.referral-text {
+  font-size: 15.5px;
+  line-height: 1.6;
+  color: var(--muted);
+  margin: 0 0 18px;
+}
+
+.referral-h2 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 20px;
+  margin: 0 0 10px;
+}
+
+/* ---- Offer summary --------------------------------------------------------- */
+
+.offer-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.offer {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 16px;
+}
+
+.offer__amount {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 26px;
+  line-height: 1;
+  color: var(--navy);
+}
+
+.offer__label {
+  font-size: 13.5px;
+  line-height: 1.4;
+  color: var(--muted-2);
+  margin-top: 8px;
+}
+
+.offer--dark {
+  background: var(--navy-deep);
+  border-color: var(--navy-deep);
+}
+
+.offer--dark .offer__amount {
+  color: var(--gold);
+}
+
+.offer--dark .offer__label {
+  color: #c2cbd8;
+}
+
+/* ---- Cards ----------------------------------------------------------------- */
+
+.referral-card {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 22px 18px;
+  box-shadow: 0 14px 34px rgba(30, 47, 77, 0.1);
+}
+
+.referral-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.referral-result {
+  text-align: center;
+}
+
+.referral-result .eyebrow {
+  display: block;
+  margin-bottom: 8px;
+}
+
+.referral-result__icon {
+  width: 60px;
+  height: 60px;
+  margin: 0 auto 16px;
+  border-radius: 999px;
+  background: #e7eef8;
+  color: var(--navy);
+  display: grid;
+  place-items: center;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 26px;
+}
+
+.referral-result__icon--success {
+  background: var(--navy);
+  color: #fff;
+}
+
+.referral-result__icon svg {
+  width: 28px;
+  height: 28px;
+}
+
+.referral-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  min-height: 140px;
+  color: var(--muted);
+  font-weight: 500;
+}
+
+/* ---- Form ------------------------------------------------------------------ */
+
+.referral .form {
+  padding: 22px 18px;
+  gap: 18px;
+}
+
+/* 16px inputs stop iOS Safari from zooming in on focus. */
+.referral .field input {
+  font-size: 16px;
+  min-height: 50px;
+  background: #fff;
+}
+
+.referral .field input:focus {
+  box-shadow: 0 0 0 3px rgba(30, 47, 77, 0.14);
+}
+
+.referral .field input[aria-invalid='true'] {
+  border-color: #b42318;
+}
+
+.field__optional {
+  font-weight: 500;
+  color: var(--muted-2);
+}
+
+.field__error {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.4;
+  color: #b42318;
+}
+
+.form-alert {
+  background: #fef3f2;
+  border: 1px solid #fecdca;
+  color: #912018;
+  border-radius: 12px;
+  padding: 12px 14px;
+  font-size: 15px;
+  line-height: 1.45;
+}
+
+.hp-field {
+  position: absolute;
+  left: -10000px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+.consent-block {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.consent {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 6px 0;
+  font-size: 15.5px;
+  font-weight: 600;
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.consent input {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  margin: 0;
+  accent-color: var(--navy);
+  cursor: pointer;
+}
+
+.consent input[aria-invalid='true'] {
+  outline: 2px solid #b42318;
+  outline-offset: 2px;
+}
+
+.consent a {
+  color: var(--navy);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* Key conditions shown right before the consent checkbox. */
+.conditions-box {
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: #fbf7f0;
+  border: 1px solid #ecdcc0;
+  font-size: 14.5px;
+  line-height: 1.55;
+  color: var(--ink);
+}
+
+.conditions-box p {
+  margin: 0;
+}
+
+.conditions-box p + p {
+  margin-top: 8px;
+  color: var(--muted);
+}
+
+.conditions-box .conditions-box__title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 15.5px;
+  margin-bottom: 4px;
+}
+
+.terms-list {
+  margin: 4px 0 0;
+  padding-left: 20px;
+  line-height: 1.55;
+}
+
+.terms-list li + li {
+  margin-top: 6px;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* Unfilled business details on the terms page. */
+.placeholder {
+  background: #fff3c4;
+  color: #7a4f00;
+  padding: 0 4px;
+  border-radius: 4px;
+}
+
+.privacy-note {
+  margin: 0;
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--muted-2);
+}
+
+.privacy-note a,
+.save-tip a {
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* ---- Buttons --------------------------------------------------------------- */
+
+.btn--block {
+  width: 100%;
+  min-height: 54px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  text-align: center;
+}
+
+.referral .btn:focus-visible,
+.referral a:focus-visible,
+.link-button:focus-visible {
+  outline: 3px solid var(--gold);
+  outline-offset: 2px;
+}
+
+.referral .btn[disabled] {
+  opacity: 0.75;
+  cursor: progress;
+}
+
+.referral-cta {
+  min-height: 62px;
+  font-size: 18px;
+  box-shadow: 0 10px 24px rgba(30, 47, 77, 0.25);
+}
+
+.referral-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.link-button {
+  margin-top: 14px;
+  padding: 10px 4px;
+  background: none;
+  border: none;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--navy);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+.spinner {
+  width: 18px;
+  height: 18px;
+  border: 2.5px solid rgba(255, 255, 255, 0.35);
+  border-top-color: #fff;
+  border-radius: 999px;
+  animation: referral-spin 0.8s linear infinite;
+}
+
+.spinner--dark {
+  border-color: rgba(30, 47, 77, 0.2);
+  border-top-color: var(--navy);
+}
+
+@keyframes referral-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spinner {
+    animation-duration: 2.4s;
+  }
+}
+
+/* ---- Link, code and message display ---------------------------------------- */
+
+.copy-label {
+  display: block;
+  text-align: left;
+  font-weight: 600;
+  font-size: 14px;
+  color: #414b5b;
+  margin: 4px 0 7px;
+}
+
+.copy-input {
+  display: block;
+  width: 100%;
+  min-height: 52px;
+  padding: 13px 14px;
+  margin-bottom: 14px;
+  border: 1px solid var(--border-strong);
+  border-radius: 12px;
+  background: var(--page);
+  color: var(--ink);
+  font: inherit;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.4;
+  text-align: left;
+  resize: none;
+  overflow: hidden;
+  overflow-wrap: anywhere;
+  field-sizing: content; /* one line on wide screens where supported */
+}
+
+.copy-input:focus {
+  outline: none;
+  border-color: var(--navy);
+  box-shadow: 0 0 0 3px rgba(30, 47, 77, 0.14);
+}
+
+.action-note {
+  margin: 10px 0 0;
+  font-size: 14px;
+  line-height: 1.45;
+  color: var(--muted-2);
+}
+
+/* Live regions stay in the DOM (so updates are announced) but take no space when empty. */
+.action-note:empty {
+  margin: 0;
+}
+
+.code-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 14px;
+  margin: 18px 0;
+  border: 1.5px dashed var(--gold);
+  border-radius: 14px;
+  background: #fbf7f0;
+}
+
+.referral-claim .code-box {
+  margin-top: 0;
+}
+
+.code-box__label {
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted-2);
+}
+
+.code-box__code {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 26px;
+  letter-spacing: 0.06em;
+  color: var(--navy);
+  user-select: all;
+}
+
+.code-box__meta {
+  font-size: 14px;
+  color: var(--muted-2);
+}
+
+.claim-hint {
+  margin: 0 0 14px;
+  font-size: 14.5px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+.sms-bubble {
+  margin: 0 0 16px;
+  padding: 14px 16px;
+  border-radius: 18px 18px 18px 6px;
+  background: #eef1f6;
+  font-size: 15.5px;
+  line-height: 1.5;
+  color: var(--ink);
+  user-select: text;
+}
+
+.mini-steps {
+  text-align: left;
+  margin: 0 0 18px;
+  padding-left: 22px;
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--muted);
+}
+
+.mini-steps li + li {
+  margin-top: 6px;
+}
+
+.save-tip {
+  margin: 0;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: var(--page);
+  font-size: 14.5px;
+  line-height: 1.5;
+  color: var(--muted);
+  text-align: left;
+}
+
+/* ---- Friend page info ------------------------------------------------------ */
+
+.referral-info {
+  padding: 8px 4px 0;
+  font-size: 15px;
+  color: var(--muted);
+}
+
+.info-list {
+  list-style: none;
+  margin: 0 0 24px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  line-height: 1.55;
+}
+
+.info-list strong {
+  color: var(--ink);
+}
+
+.referral-info .terms-list {
+  margin-bottom: 24px;
+}
+
+.referral-more {
+  margin: 0 0 10px;
+  font-weight: 600;
+}
+
+/* Friend page: conditions directly under the offer. */
+.offer-terms {
+  margin: 0;
+  font-size: 14.5px;
+  line-height: 1.55;
+  color: var(--muted);
+}
+
+.offer-terms__link {
+  display: inline-block;
+  padding: 6px 0;
+  font-weight: 700;
+  color: var(--navy);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* ---- Terms & Conditions page ----------------------------------------------- */
+
+.referral .terms-page {
+  max-width: 720px;
+  font-size: 16px;
+  line-height: 1.65;
+  color: var(--muted);
+}
+
+.terms-back {
+  display: inline-block;
+  padding: 8px 0;
+  margin-bottom: 12px;
+  font-weight: 600;
+}
+
+.terms-head {
+  margin-bottom: 28px;
+}
+
+.terms-head .eyebrow {
+  display: block;
+  margin-bottom: 10px;
+}
+
+.terms-meta {
+  margin: 0 0 16px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--muted-2);
+}
+
+.terms-h2 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 21px;
+  line-height: 1.25;
+  color: var(--ink);
+  margin: 0 0 12px;
+}
+
+.terms-h2__num {
+  color: var(--gold-dark);
+}
+
+.terms-how {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 22px 18px;
+  margin-bottom: 32px;
+  box-shadow: 0 14px 34px rgba(30, 47, 77, 0.08);
+}
+
+.how-steps {
+  list-style: none;
+  counter-reset: how;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 16px;
+}
+
+.how-steps li {
+  counter-increment: how;
+  position: relative;
+  padding-left: 46px;
+  font-size: 15.5px;
+  line-height: 1.55;
+}
+
+.how-steps li::before {
+  content: counter(how);
+  position: absolute;
+  left: 0;
+  top: -2px;
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  background: var(--navy);
+  color: #fff;
+  display: grid;
+  place-items: center;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 15px;
+}
+
+.how-steps strong,
+.terms-section strong {
+  color: var(--ink);
+}
+
+.terms-section {
+  padding: 24px 0;
+  border-top: 1px solid var(--border);
+  scroll-margin-top: 16px;
+}
+
+.terms-section p {
+  margin: 0 0 12px;
+}
+
+.terms-section ul,
+.terms-section ol {
+  margin: 0 0 12px;
+  padding-left: 22px;
+}
+
+.terms-section li + li {
+  margin-top: 8px;
+}
+
+.terms-section > :last-child {
+  margin-bottom: 0;
+}
+
+.terms-contact {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2px 20px;
+  margin: 0;
+  padding: 16px 18px;
+  border-radius: 14px;
+  background: #fff;
+  border: 1px solid var(--border);
+}
+
+.terms-contact dt {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted-2);
+  margin-top: 10px;
+}
+
+.terms-contact dt:first-child {
+  margin-top: 0;
+}
+
+.terms-contact dd {
+  margin: 0;
+  color: var(--ink);
+  overflow-wrap: anywhere;
+}
+
+.nowrap {
+  white-space: nowrap;
+}
+
+.break-anywhere {
+  overflow-wrap: anywhere;
+}
+
+/* ---- Larger screens -------------------------------------------------------- */
+
+@media (min-width: 560px) {
+  .referral {
+    padding: 48px 0 72px;
+  }
+
+  .referral .container {
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+
+  .referral-title {
+    font-size: 42px;
+  }
+
+  .referral-title--sm {
+    font-size: 34px;
+  }
+
+  .offer__amount {
+    font-size: 32px;
+  }
+
+  .referral-card,
+  .referral .form,
+  .terms-how {
+    padding: 32px;
+  }
+
+  .terms-contact {
+    grid-template-columns: auto 1fr;
+    align-items: baseline;
+  }
+
+  .terms-contact dt,
+  .terms-contact dt:first-child {
+    margin-top: 6px;
+  }
+
+  .terms-contact dd {
+    margin-top: 6px;
+  }
+
+  .referral-actions--row {
+    flex-direction: row;
+  }
+
+  .referral-actions--row .btn {
+    flex: 1;
+  }
+}

@@ -81,7 +81,7 @@ paid or applied only once a qualifying installation is completed and fully paid.
 | Sign-up page (the QR code opens this) | `https://www.lanainsulation.com/velvet-caribou-7nQ4pT9k2M` |
 | Referred friend's page | `https://www.lanainsulation.com/warmth/WARM-XXXXXX` |
 | Terms & Conditions (public) | `https://www.lanainsulation.com/referral-terms` |
-| Salesperson QR code | `marketing/referral-signup-qr.png` (phones) and `.svg` (print) |
+| Salesperson QR code | `marketing/referral-signup-qr.png` (phones) and `.svg` (print). Not in git: kept on your computer only. Run `npm run qr` to recreate it. |
 | Amounts, terms versions, texting number, business details | `src/referralConfig.js` |
 | Full terms text | `src/referral/TermsPage.jsx` |
 | Database schema | `db/schema.sql` |

@@ -4,3 +4,7 @@ dist
 .DS_Store
 .env*.local
 .vercel
+
+# Salesperson QR codes (open the unlisted sign-up page). Kept on local
+# machines only; regenerate with `npm run qr`.
+marketing/

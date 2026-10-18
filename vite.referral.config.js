@@ -65,26 +65,26 @@ export function unlistedPathGuard() {
   };
 }
 
-// Make unfinished business details impossible to miss.
-function placeholderWarnings() {
+// Unfinished business details must never reach the live site: fail the build
+// on placeholder text, a missing payout method or an invalid texting number.
+function noPlaceholders() {
   return {
-    name: 'referral-placeholder-warnings',
+    name: 'referral-no-placeholders',
     apply: 'build',
     buildStart() {
-      const missing = [];
-      if (!toE164(referralConfig.businessTextNumber)) missing.push('referralConfig.businessTextNumber');
+      const problems = [];
+      if (!toE164(referralConfig.businessTextNumber)) problems.push('referralConfig.businessTextNumber is not a valid phone number');
+      if (!businessDetails.payoutMethod) problems.push('businessDetails.payoutMethod is empty');
       for (const [key, value] of Object.entries(businessDetails)) {
-        if (value === null || isPlaceholder(value)) missing.push(`businessDetails.${key}`);
+        if (isPlaceholder(value)) problems.push(`businessDetails.${key} is placeholder text (${value})`);
       }
-      if (missing.length) {
-        this.warn(`Referral program details still to fill in (src/referralConfig.js): ${missing.join(', ')}`);
-      }
+      if (problems.length) this.error(`Fix src/referralConfig.js before building: ${problems.join('; ')}`);
     },
   };
 }
 
 export default defineConfig({
-  plugins: [react(), placeholderWarnings(), unlistedPathGuard()],
+  plugins: [react(), noPlaceholders(), unlistedPathGuard()],
   build: {
     emptyOutDir: false, // the main site build has just filled dist/
     copyPublicDir: false, // already copied by the main site build

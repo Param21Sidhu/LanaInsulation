@@ -317,14 +317,6 @@
   white-space: nowrap;
 }
 
-/* Unfilled business details on the terms page. */
-.placeholder {
-  background: #fff3c4;
-  color: #7a4f00;
-  padding: 0 4px;
-  border-radius: 4px;
-}
-
 .privacy-note {
   margin: 0;
   font-size: 13.5px;

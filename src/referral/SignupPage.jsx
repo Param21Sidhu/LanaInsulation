@@ -428,7 +428,7 @@ function SuccessView({ referral, justRegistered, onStartOver }) {
           <li>They tap the button on your link to text us. Your code is included automatically.</li>
           <li>
             Once their installation is completed and fully paid and we’ve verified the referral,
-            we contact you to send your {reward}.
+            we send your {reward} by {businessDetails.payoutMethod} to the email you signed up with.
           </li>
         </ol>
 

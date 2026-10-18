@@ -115,14 +115,14 @@ vercel.json                            # rewrites + noindex headers
 
 ### One-time setup
 
-1. **Business details.** In `src/referralConfig.js`, set the following:
-   - `businessTextNumber`, which is already `506-721-9278`.
-   - The `businessDetails` placeholders: legal name, mailing address and payout method.
-   - `privacyPolicyUrl`, once a Privacy Policy exists.
-   - The `effectiveDate` in `termsVersions`.
+1. **Business details.** These live in `src/referralConfig.js`:
+   - `businessTextNumber` is `506-721-9278`.
+   - `businessDetails.payoutMethod` is `Interac e-Transfer`.
+   - Optional: `legalName`, `mailingAddress` and `privacyPolicyUrl`. While one is
+     `null`, its line is left off the terms page.
 
-   Bracketed placeholders show highlighted on the terms page, and `npm run build`
-   lists any still missing. Have the terms reviewed before launch.
+   `npm run build` **fails** if any value is placeholder text such as `[NAME]`, so
+   placeholders can't reach the live site.
 2. **Database.** In the Vercel dashboard, open the project and go to Storage →
    Create/Connect → **Neon** (Postgres). Connect it to Production and Preview. This
    adds `DATABASE_URL` to the project automatically.

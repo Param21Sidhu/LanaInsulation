@@ -3,7 +3,7 @@
 // If you change the substance of these terms after launch, add a new entry to
 // termsVersions there so existing sign-ups keep the version they accepted.
 import { useState } from 'react';
-import { businessDetails, cad, currentTerms, isPlaceholder, referralConfig } from '../referralConfig.js';
+import { businessDetails, cad, currentTerms, referralConfig } from '../referralConfig.js';
 import { siteConfig } from '../siteConfig.js';
 import ReferralLayout from './ReferralLayout.jsx';
 import { businessTextNumber } from './sms.js';
@@ -11,12 +11,8 @@ import { businessTextNumber } from './sms.js';
 const reward = cad(referralConfig.referrerReward);
 const discount = cad(referralConfig.friendDiscount);
 const { payoutDays } = referralConfig;
+const { payoutMethod } = businessDetails;
 const siteHost = referralConfig.siteUrl.replace(/^https?:\/\//, '');
-
-// Unfilled config values are highlighted so they're obvious in review.
-function Detail({ value }) {
-  return isPlaceholder(value) ? <mark className="placeholder">{value}</mark> : value;
-}
 
 // If a referral page opened this one, offer a way back to it. Uses the
 // referrer instead of a hard-coded link so this public page never contains the
@@ -67,7 +63,8 @@ function Section({ n, id, title, children }) {
 
 export default function TermsPage() {
   const [returnLink] = useState(getReturnLink);
-  const showTextLine = businessTextNumber.display !== siteConfig.phoneDisplay;
+  const showTextLine =
+    businessTextNumber.configured && businessTextNumber.display !== siteConfig.phoneDisplay;
 
   return (
     <ReferralLayout>
@@ -77,9 +74,7 @@ export default function TermsPage() {
         <header className="terms-head">
           <span className="eyebrow">{siteConfig.name}</span>
           <h1 className="referral-title">Referral Program — Terms &amp; Conditions</h1>
-          <p className="terms-meta">
-            Effective and last updated {currentTerms.effectiveDate} · Version {currentTerms.version}
-          </p>
+          <p className="terms-meta">Effective and last updated {currentTerms.effectiveDate}</p>
           <p className="referral-lead">
             Recommend us to friends and family. When someone you refer completes and fully pays
             for a qualifying attic insulation installation, you earn {reward} and they get{' '}
@@ -107,7 +102,8 @@ export default function TermsPage() {
             </li>
             <li>
               <strong>You earn {reward}.</strong> After their installation is completed and fully
-              paid and we’ve verified the referral, we pay your reward within {payoutDays} days.
+              paid and we’ve verified the referral, we send your reward by {payoutMethod} within{' '}
+              {payoutDays} days.
             </li>
           </ol>
         </section>
@@ -203,9 +199,9 @@ export default function TermsPage() {
             itself earn a reward.
           </p>
           <p>
-            <strong>Payment:</strong> we pay rewards by <Detail value={businessDetails.payoutMethod} />{' '}
-            within {payoutDays} calendar days after all of the conditions above are met. Rewards are
-            paid manually; we’ll contact you using the details you registered with.
+            <strong>Payment:</strong> we pay rewards by {payoutMethod} within {payoutDays} calendar
+            days after all of the conditions above are met. We send the e-Transfer to the email
+            address you registered with, and we may contact you first to confirm your details.
           </p>
         </Section>
 
@@ -309,10 +305,12 @@ export default function TermsPage() {
           <dl className="terms-contact">
             <dt>Business</dt>
             <dd>{siteConfig.name}</dd>
-            <dt>Legal business name</dt>
-            <dd>
-              <Detail value={businessDetails.legalName} />
-            </dd>
+            {businessDetails.legalName && (
+              <>
+                <dt>Legal business name</dt>
+                <dd>{businessDetails.legalName}</dd>
+              </>
+            )}
             <dt>Email</dt>
             <dd>
               <a href={siteConfig.mailHref}>{siteConfig.email}</a>
@@ -324,19 +322,15 @@ export default function TermsPage() {
             {showTextLine && (
               <>
                 <dt>Referral text line</dt>
-                <dd>
-                  {businessTextNumber.configured ? (
-                    businessTextNumber.display
-                  ) : (
-                    <mark className="placeholder">{businessTextNumber.display}</mark>
-                  )}
-                </dd>
+                <dd>{businessTextNumber.display}</dd>
               </>
             )}
-            <dt>Mailing address</dt>
-            <dd>
-              <Detail value={businessDetails.mailingAddress} />
-            </dd>
+            {businessDetails.mailingAddress && (
+              <>
+                <dt>Mailing address</dt>
+                <dd>{businessDetails.mailingAddress}</dd>
+              </>
+            )}
             <dt>Website</dt>
             <dd>
               <a href="/">{siteHost}</a>

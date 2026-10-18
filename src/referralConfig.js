@@ -44,14 +44,18 @@ export const referralConfig = {
   payoutDays: 30,
 };
 
-// Details shown on the Terms & Conditions page. Bracketed values are
-// placeholders: they appear highlighted on the page and `npm run build` warns
-// until they're replaced. Phone and email come from src/siteConfig.js.
+// Details shown on the Terms & Conditions page. Phone and email come from
+// src/siteConfig.js. Leave an optional value as null and its line is simply
+// left off the page. Never use placeholder text: `npm run build` fails on
+// bracketed values like "[NAME]" so they can't reach the live site.
 export const businessDetails = {
-  legalName: '[LEGAL BUSINESS NAME]',
-  mailingAddress: '[BUSINESS MAILING ADDRESS]',
-  payoutMethod: '[PAYOUT METHOD, e.g. Interac e-Transfer]',
-  // Path or URL of the site's Privacy Policy once one exists, e.g. '/privacy'.
+  // How referrer rewards are paid (used in the terms).
+  payoutMethod: 'Interac e-Transfer',
+  // Optional: registered legal name, if different from "Lana Insulation".
+  legalName: null,
+  // Optional: mailing address to list under "Contact us".
+  mailingAddress: null,
+  // Optional: path or URL of the site's Privacy Policy once one exists.
   privacyPolicyUrl: null,
 };
 

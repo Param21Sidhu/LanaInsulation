@@ -49,6 +49,16 @@ function rememberOwnCode(code) {
   }
 }
 
+// Called when the server says a remembered code no longer exists (deleted).
+export function forgetOwnCode(code) {
+  try {
+    localStorage.setItem(OWN_KEY, JSON.stringify(loadOwnCodes().filter((c) => c !== code)));
+  } catch {
+    // Nothing to forget.
+  }
+  if (loadSavedReferral()?.code === code) clearSavedReferral();
+}
+
 export function isOwnCodeOnThisDevice(code) {
   return loadOwnCodes().includes(code) || loadSavedReferral()?.code === code;
 }

@@ -13,9 +13,11 @@ import { siteConfig } from '../siteConfig.js';
 import { IconCheck, IconMessage } from './icons.jsx';
 import ReferralLayout from './ReferralLayout.jsx';
 import ShareLink from './ShareLink.jsx';
+import { lookupCode } from './lookupCode.js';
 import {
   clearDraft,
   clearSavedReferral,
+  forgetOwnCode,
   loadDraft,
   loadSavedReferral,
   saveDraft,
@@ -36,10 +38,29 @@ export default function SignupPage() {
   const [referral, setReferral] = useState(loadSavedReferral);
   const [justRegistered, setJustRegistered] = useState(false);
   const [existingEmail, setExistingEmail] = useState('');
+  const [notice, setNotice] = useState('');
+  const restoredCode = useRef(referral?.code);
 
   useEffect(() => {
     saveDraft(form);
   }, [form]);
+
+  // A link remembered on this device may since have been deleted from the
+  // database. If so, forget it and show the sign-up form again.
+  useEffect(() => {
+    const code = restoredCode.current;
+    if (!code) return undefined;
+    let active = true;
+    lookupCode(code, { own: true }).then((result) => {
+      if (!active || result.status !== 'missing') return;
+      forgetOwnCode(code);
+      setReferral((current) => (current?.code === code ? null : current));
+      setNotice('Your previous referral link is no longer active. Sign up below to get a new one.');
+    });
+    return () => {
+      active = false;
+    };
+  }, []);
 
   const handleRegistered = (result) => {
     clearDraft();
@@ -68,6 +89,7 @@ export default function SignupPage() {
       <SignupForm
         form={form}
         setForm={setForm}
+        notice={notice}
         onRegistered={handleRegistered}
         onAlreadyRegistered={setExistingEmail}
       />
@@ -94,7 +116,7 @@ async function postJson(url, body, timeoutMs = 15000) {
   }
 }
 
-function SignupForm({ form, setForm, onRegistered, onAlreadyRegistered }) {
+function SignupForm({ form, setForm, notice, onRegistered, onAlreadyRegistered }) {
   const [errors, setErrors] = useState({});
   const [formError, setFormError] = useState('');
   const [submitting, setSubmitting] = useState(false);
@@ -178,6 +200,11 @@ function SignupForm({ form, setForm, onRegistered, onAlreadyRegistered }) {
 
       <section className="container">
         <form className="form referral-form" onSubmit={handleSubmit} noValidate aria-busy={submitting}>
+          {notice && !formError && (
+            <div className="form-notice" role="status">
+              {notice}
+            </div>
+          )}
           {formError && (
             <div className="form-alert" role="alert">
               {formError}

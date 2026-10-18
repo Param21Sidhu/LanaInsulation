@@ -4,7 +4,8 @@ import { useEffect, useState } from 'react';
 import { dollars, friendSummary, friendTerms, referralConfig, referralUrl } from '../referralConfig.js';
 import { IconCheck, IconCopy, IconMessage } from './icons.jsx';
 import ReferralLayout from './ReferralLayout.jsx';
-import { isOwnCodeOnThisDevice } from './savedReferral.js';
+import { lookupCode } from './lookupCode.js';
+import { forgetOwnCode, isOwnCodeOnThisDevice } from './savedReferral.js';
 import ShareLink from './ShareLink.jsx';
 import { businessTextNumber, friendMessage, isLikelyPhone, smsHref } from './sms.js';
 import { useCopy } from './useCopy.js';
@@ -26,37 +27,32 @@ function codeFromLocation() {
 
 export default function FriendPage() {
   const [code] = useState(codeFromLocation);
-  // A code signed up on this device is the visitor's own: no lookup needed
-  // (and their own visit isn't counted as a referral visit).
-  const [lookup, setLookup] = useState(() => {
-    if (!code) return { status: 'invalid' };
-    return isOwnCodeOnThisDevice(code) ? { status: 'own' } : { status: 'loading' };
-  });
+  const [lookup, setLookup] = useState(code ? { status: 'loading' } : { status: 'invalid' });
 
   useEffect(() => {
-    if (!code || isOwnCodeOnThisDevice(code)) return undefined;
+    if (!code) return undefined;
     let active = true;
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), 8000);
+    const ownHere = isOwnCodeOnThisDevice(code);
 
-    fetch(`/api/referrals/lookup?code=${encodeURIComponent(code)}`, {
-      headers: { Accept: 'application/json' },
-      signal: controller.signal,
-    })
-      .then(async (response) => {
-        const data = await response.json().catch(() => null);
-        if (response.status === 404 && data?.error === 'not_found') return { status: 'invalid' };
-        // The referrer opening their own link (recognized by the server's
-        // cookie or this device's storage) can share it but not claim it.
-        if (data?.isOwnLink || isOwnCodeOnThisDevice(code)) return { status: 'own' };
-        return { status: 'ready', firstName: response.ok ? data?.firstName ?? '' : '' };
-      })
-      // If the lookup fails for any other reason (offline, server trouble),
-      // still let the friend text us: the code comes from the link itself and
-      // our team verifies every referral by hand anyway.
-      .catch(() => (isOwnCodeOnThisDevice(code) ? { status: 'own' } : { status: 'ready', firstName: '' }))
+    lookupCode(code, { own: ownHere, signal: controller.signal })
       .then((result) => {
-        if (active) setLookup(result);
+        if (!active) return;
+        if (result.status === 'missing') {
+          // Deleted or never existed. Forget it if this device signed it up.
+          if (ownHere) forgetOwnCode(code);
+          setLookup({ status: 'invalid' });
+        } else if (result.isOwnLink || ownHere) {
+          // The referrer opening their own link (recognized by the server's
+          // cookie or this device's storage) can share it but not claim it.
+          setLookup({ status: 'own' });
+        } else {
+          // Also covers offline / server trouble: still let the friend text
+          // us, since the code comes from the link and our team verifies every
+          // referral by hand anyway.
+          setLookup({ status: 'ready', firstName: result.firstName ?? '' });
+        }
       })
       .finally(() => clearTimeout(timer));
 

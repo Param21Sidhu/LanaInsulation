@@ -559,6 +559,17 @@
   color: var(--ink);
 }
 
+.service-list {
+  margin: 10px 0 0;
+  padding: 12px 14px 12px 34px;
+  border-radius: 14px;
+  background: #fff;
+  border: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
 .referral-info .terms-list {
   margin-bottom: 24px;
 }
@@ -566,6 +577,10 @@
 .referral-more {
   margin: 0 0 10px;
   font-weight: 600;
+}
+
+.referral-result .referral-more {
+  margin: 18px 0 0;
 }
 
 /* Friend page: conditions directly under the offer. */

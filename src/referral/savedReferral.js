@@ -23,6 +23,34 @@ export function saveReferral({ code, url, firstName }) {
   } catch {
     // Private mode etc. The success screen still works.
   }
+  rememberOwnCode(code);
+}
+
+// Every code signed up on this device, so a referrer opening their own link
+// can't claim the friend discount. Not cleared by "Sign up someone else".
+// The server also sets a cookie for the same purpose (server/ownCodes.js).
+const OWN_KEY = 'lana-referral-own';
+
+function loadOwnCodes() {
+  try {
+    const codes = JSON.parse(localStorage.getItem(OWN_KEY));
+    return Array.isArray(codes) ? codes.filter((code) => normalizeReferralCode(code) === code) : [];
+  } catch {
+    return [];
+  }
+}
+
+function rememberOwnCode(code) {
+  try {
+    const codes = [...loadOwnCodes().filter((c) => c !== code), code].slice(-20);
+    localStorage.setItem(OWN_KEY, JSON.stringify(codes));
+  } catch {
+    // Storage unavailable; the server cookie still covers this.
+  }
+}
+
+export function isOwnCodeOnThisDevice(code) {
+  return loadOwnCodes().includes(code) || loadSavedReferral()?.code === code;
 }
 
 export function clearSavedReferral() {

@@ -10,8 +10,9 @@ import {
   signupSummary,
 } from '../referralConfig.js';
 import { siteConfig } from '../siteConfig.js';
-import { IconCheck, IconCopy, IconMessage, IconShare } from './icons.jsx';
+import { IconCheck, IconMessage } from './icons.jsx';
 import ReferralLayout from './ReferralLayout.jsx';
+import ShareLink from './ShareLink.jsx';
 import {
   clearDraft,
   clearSavedReferral,
@@ -21,7 +22,6 @@ import {
   saveReferral,
 } from './savedReferral.js';
 import { smsHref } from './sms.js';
-import { useCopy } from './useCopy.js';
 import { FIELD_ORDER, validateRegistration } from './validation.js';
 
 const reward = dollars(referralConfig.referrerReward);
@@ -338,39 +338,6 @@ function useFocusOnMount(enabled = true) {
 
 function SuccessView({ referral, justRegistered, onStartOver }) {
   const headingRef = useFocusOnMount(justRegistered);
-  const linkRef = useRef(null);
-  const [copyStatus, copy] = useCopy();
-  const [note, setNote] = useState('');
-
-  const copyLink = async () => {
-    const copied = await copy(referral.url);
-    setNote(copied ? 'Link copied. Paste it into a text, email or post.' : 'Press and hold the link above to copy it.');
-    if (!copied) linkRef.current?.select();
-  };
-
-  const shareLink = async () => {
-    const shareData = {
-      title: 'Lana Insulation referral',
-      text: `Get ${discount} off a qualifying attic insulation installation with Lana Insulation. Use my referral link:`,
-      url: referral.url,
-    };
-    if (navigator.share && (!navigator.canShare || navigator.canShare(shareData))) {
-      try {
-        await navigator.share(shareData);
-        setNote('');
-        return;
-      } catch (error) {
-        if (error?.name === 'AbortError') return; // They closed the share sheet.
-      }
-    }
-    const copied = await copy(referral.url);
-    setNote(
-      copied
-        ? 'Sharing isn’t available here, so we copied your link instead. Paste it into a text, email or post.'
-        : 'Press and hold the link above to copy it, then paste it into a message.',
-    );
-    if (!copied) linkRef.current?.select();
-  };
 
   return (
     <section className="container">
@@ -390,33 +357,7 @@ function SuccessView({ referral, justRegistered, onStartOver }) {
           paid.
         </p>
 
-        <label className="copy-label" htmlFor="referral-link">
-          Your personal referral link
-        </label>
-        {/* A textarea so the full link wraps on narrow phones instead of being cut off. */}
-        <textarea
-          id="referral-link"
-          ref={linkRef}
-          className="copy-input"
-          readOnly
-          rows={2}
-          value={referral.url}
-          onFocus={(event) => event.target.select()}
-        />
-
-        <div className="referral-actions referral-actions--row">
-          <button type="button" className="btn btn--primary btn--lg btn--block" onClick={copyLink}>
-            {copyStatus === 'copied' ? <IconCheck /> : <IconCopy />}
-            {copyStatus === 'copied' ? 'Copied!' : 'Copy Referral Link'}
-          </button>
-          <button type="button" className="btn btn--gold btn--lg btn--block" onClick={shareLink}>
-            <IconShare />
-            Share With Friends
-          </button>
-        </div>
-        <p className="action-note" aria-live="polite">
-          {note}
-        </p>
+        <ShareLink url={referral.url} />
 
         <div className="code-box">
           <span className="code-box__label">Your referral code</span>

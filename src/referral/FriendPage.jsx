@@ -1,14 +1,17 @@
 // Landing page for a referred friend: /warmth/WARM-XXXXXX.
 // One tap opens their SMS app with our number and a prefilled message.
 import { useEffect, useState } from 'react';
-import { dollars, friendSummary, friendTerms, referralConfig } from '../referralConfig.js';
+import { dollars, friendSummary, friendTerms, referralConfig, referralUrl } from '../referralConfig.js';
 import { IconCheck, IconCopy, IconMessage } from './icons.jsx';
 import ReferralLayout from './ReferralLayout.jsx';
+import { isOwnCodeOnThisDevice } from './savedReferral.js';
+import ShareLink from './ShareLink.jsx';
 import { businessTextNumber, friendMessage, isLikelyPhone, smsHref } from './sms.js';
 import { useCopy } from './useCopy.js';
 import { normalizeReferralCode } from './validation.js';
 
 const discount = dollars(referralConfig.friendDiscount);
+const reward = dollars(referralConfig.referrerReward);
 
 function codeFromLocation() {
   const prefix = `${referralConfig.referralPath}/`;
@@ -23,10 +26,15 @@ function codeFromLocation() {
 
 export default function FriendPage() {
   const [code] = useState(codeFromLocation);
-  const [lookup, setLookup] = useState(code ? { status: 'loading' } : { status: 'invalid' });
+  // A code signed up on this device is the visitor's own: no lookup needed
+  // (and their own visit isn't counted as a referral visit).
+  const [lookup, setLookup] = useState(() => {
+    if (!code) return { status: 'invalid' };
+    return isOwnCodeOnThisDevice(code) ? { status: 'own' } : { status: 'loading' };
+  });
 
   useEffect(() => {
-    if (!code) return undefined;
+    if (!code || isOwnCodeOnThisDevice(code)) return undefined;
     let active = true;
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), 8000);
@@ -38,12 +46,15 @@ export default function FriendPage() {
       .then(async (response) => {
         const data = await response.json().catch(() => null);
         if (response.status === 404 && data?.error === 'not_found') return { status: 'invalid' };
+        // The referrer opening their own link (recognized by the server's
+        // cookie or this device's storage) can share it but not claim it.
+        if (data?.isOwnLink || isOwnCodeOnThisDevice(code)) return { status: 'own' };
         return { status: 'ready', firstName: response.ok ? data?.firstName ?? '' : '' };
       })
       // If the lookup fails for any other reason (offline, server trouble),
       // still let the friend text us: the code comes from the link itself and
       // our team verifies every referral by hand anyway.
-      .catch(() => ({ status: 'ready', firstName: '' }))
+      .catch(() => (isOwnCodeOnThisDevice(code) ? { status: 'own' } : { status: 'ready', firstName: '' }))
       .then((result) => {
         if (active) setLookup(result);
       })
@@ -59,6 +70,7 @@ export default function FriendPage() {
   useEffect(() => {
     if (lookup.status === 'ready') document.title = `You’ve Been Referred — ${discount} Off | Lana Insulation`;
     if (lookup.status === 'invalid') document.title = 'Referral Link Not Found | Lana Insulation';
+    if (lookup.status === 'own') document.title = 'Your Referral Link | Lana Insulation';
   }, [lookup.status]);
 
   let content;
@@ -73,6 +85,8 @@ export default function FriendPage() {
     );
   } else if (lookup.status === 'invalid') {
     content = <InvalidReferral />;
+  } else if (lookup.status === 'own') {
+    content = <OwnReferral code={code} />;
   } else {
     content = <ReferralOffer code={code} firstName={lookup.firstName} />;
   }
@@ -169,12 +183,25 @@ function ReferralOffer({ code, firstName }) {
           <h2 className="referral-h2">What you’re getting</h2>
           <ul className="info-list">
             <li>
-              <strong>A free attic assessment.</strong> We check your attic and give you a clear,
-              honest price — no cost and no pressure to book.
+              <strong>A free attic assessment.</strong> We check your attic, recommend what your
+              home needs, and give you a clear, honest price — no cost and no pressure to book.
             </li>
             <li>
-              <strong>Blown-in insulation.</strong> Even cellulose or fiberglass coverage that
-              helps keep heat in. Results vary by home.
+              <strong>Complete attic insulation, based on what your home needs:</strong>
+              <ul className="service-list">
+                <li>
+                  <strong>Blown-out insulation.</strong> Old, damaged or contaminated insulation
+                  removed and hauled away.
+                </li>
+                <li>
+                  <strong>Mold removal.</strong> We find the cause, clear the mold and protect your
+                  air quality before new insulation goes in.
+                </li>
+                <li>
+                  <strong>Blown-in insulation.</strong> Fresh cellulose or fiberglass that fills
+                  every gap and corner for even coverage.
+                </li>
+              </ul>
             </li>
             <li>
               <strong>{discount} off.</strong> Your referral discount comes off a qualifying
@@ -198,6 +225,31 @@ function ReferralOffer({ code, firstName }) {
         </div>
       </section>
     </>
+  );
+}
+
+// The referrer opened their own link: they can share it, but there's no claim
+// button or prefilled message for them to send themselves.
+function OwnReferral({ code }) {
+  return (
+    <section className="container">
+      <div className="referral-card referral-result">
+        <div className="referral-result__icon" aria-hidden="true">
+          <IconCheck />
+        </div>
+        <span className="eyebrow">Your referral code: {code}</span>
+        <h1 className="referral-title referral-title--sm">This Is Your Own Referral Link</h1>
+        <p className="referral-lead">
+          Self-referrals aren’t eligible, so your own link can’t be used to claim the {discount}{' '}
+          discount. Share it with friends and family instead: they get {discount} off a qualifying
+          installation, and you earn {reward} when their installation is completed and fully paid.
+        </p>
+        <ShareLink url={referralUrl(code)} />
+        <p className="referral-more">
+          <a href={referralConfig.termsPath}>Read the program terms →</a>
+        </p>
+      </div>
+    </section>
   );
 }
 

@@ -43,6 +43,12 @@ export async function createReferrer({ name, firstName, email, phone, termsVersi
   throw new Error('Could not generate a unique referral code');
 }
 
+// Looks up a code without counting a visit.
+export async function findReferrer(code) {
+  const [row] = await db.query('SELECT first_name FROM referrers WHERE referral_code = $1', [code]);
+  return row ? { firstName: row.first_name } : null;
+}
+
 // Looks up a code for the friend's landing page and counts the visit.
 // Only the first name leaves the database.
 export async function recordLandingView(code) {

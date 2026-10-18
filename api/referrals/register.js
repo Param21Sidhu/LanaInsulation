@@ -2,6 +2,7 @@
 // Body: { name, email, phone?, acceptedTerms: true, hp: '' }
 import { db } from '../../server/db.js';
 import { isSameOrigin, json, readJsonObject } from '../../server/http.js';
+import { ownCodesCookie } from '../../server/ownCodes.js';
 import { isRateLimited } from '../../server/rateLimit.js';
 import { createReferrer } from '../../server/referrals.js';
 import { validateRegistration } from '../../src/referral/validation.js';
@@ -39,7 +40,11 @@ export async function POST(request) {
     // details on file instead.
     if (result.status === 'exists') return json({ error: 'already_registered' }, 409);
 
-    return json({ code: result.code, url: result.url, firstName: values.firstName }, 201);
+    // Remember on this browser that the code is the referrer's own, so their
+    // link won't offer them the friend discount.
+    return json({ code: result.code, url: result.url, firstName: values.firstName }, 201, {
+      'Set-Cookie': ownCodesCookie(request, result.code),
+    });
   } catch (error) {
     console.error('[referrals] registration failed:', error?.message);
     return json({ error: 'server' }, 500);

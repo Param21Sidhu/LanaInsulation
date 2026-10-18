@@ -256,7 +256,9 @@ export default function TermsPage() {
           <ul>
             <li>
               <strong>What we collect:</strong> your name, email address, optional phone number,
-              referral code, registration date, and the version of these terms you accepted.
+              referral code, registration date, and the version of these terms you accepted. We
+              also save your referral code in a cookie on the device you sign up with, so your own
+              link isn’t offered the friend discount.
             </li>
             <li>
               <strong>How we use it:</strong> to run the referral program, verify referrals,

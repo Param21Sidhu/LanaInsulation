@@ -1,10 +1,12 @@
 // GET /api/referrals/lookup?code=WARM-XXXXXX — used by the friend's landing
 // page. Public by design, so it returns only the code and the referrer's first
-// name (disclosed to referrers at sign-up), never email or phone.
+// name (disclosed to referrers at sign-up), never email or phone. Also says
+// whether the code was created on this browser (the referrer's own link).
 import { db } from '../../server/db.js';
 import { json } from '../../server/http.js';
+import { ownCodesFromRequest } from '../../server/ownCodes.js';
 import { isRateLimited } from '../../server/rateLimit.js';
-import { recordLandingView } from '../../server/referrals.js';
+import { findReferrer, recordLandingView } from '../../server/referrals.js';
 import { normalizeReferralCode } from '../../src/referral/validation.js';
 
 const RATE_LIMIT = { limit: 60, windowSeconds: 60 };
@@ -21,9 +23,11 @@ export async function GET(request) {
     if (await isRateLimited(request, 'lookup', RATE_LIMIT)) {
       return json({ error: 'rate_limited' }, 429, { 'Retry-After': String(RATE_LIMIT.windowSeconds) });
     }
-    const referrer = await recordLandingView(code);
+    // The referrer looking at their own link isn't a referral visit.
+    const isOwnLink = ownCodesFromRequest(request).includes(code);
+    const referrer = isOwnLink ? await findReferrer(code) : await recordLandingView(code);
     if (!referrer) return json({ error: 'not_found' }, 404);
-    return json({ code, firstName: referrer.firstName });
+    return json({ code, firstName: referrer.firstName, isOwnLink });
   } catch (error) {
     console.error('[referrals] lookup failed:', error?.message);
     return json({ error: 'server' }, 500);

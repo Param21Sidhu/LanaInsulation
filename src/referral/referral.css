@@ -203,11 +203,6 @@
   border-color: #b42318;
 }
 
-.field__optional {
-  font-weight: 500;
-  color: var(--muted-2);
-}
-
 .field__error {
   margin: 0;
   font-size: 14px;

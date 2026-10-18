@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS referrers (
   full_name           TEXT        NOT NULL,
   first_name          TEXT        NOT NULL,          -- shown to referred friends
   email               TEXT        NOT NULL UNIQUE,   -- trimmed + lowercased
-  phone               TEXT,                          -- +1XXXXXXXXXX, optional
+  phone               TEXT,                          -- +1 and 10 digits; required at sign-up
   referral_code       TEXT        NOT NULL UNIQUE,   -- e.g. WARM-7KQ2DX
   referral_url        TEXT        NOT NULL,
   terms_version       TEXT        NOT NULL,          -- terms version accepted at sign-up

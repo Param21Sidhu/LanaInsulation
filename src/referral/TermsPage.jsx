@@ -255,7 +255,7 @@ export default function TermsPage() {
         <Section n={9} id="privacy" title="Privacy and your information">
           <ul>
             <li>
-              <strong>What we collect:</strong> your name, email address, optional phone number,
+              <strong>What we collect:</strong> your name, email address, phone number,
               referral code, registration date, and the version of these terms you accepted. We
               also save your referral code in a cookie on the device you sign up with, so your own
               link isn’t offered the friend discount.

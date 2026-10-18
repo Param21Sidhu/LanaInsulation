@@ -37,6 +37,18 @@ export function toE164(value) {
   return NANP_PATTERN.test(digits) ? `+1${digits}` : null;
 }
 
+// Formats the phone field as the person types: digits only, a leading country
+// code 1 dropped (autofill often adds +1; area codes never start with 1), at
+// most 10 digits, shown as 506-555-0123.
+export function formatPhoneInput(value) {
+  let digits = String(value ?? '').replace(/\D/g, '');
+  if (digits.startsWith('1')) digits = digits.slice(1);
+  digits = digits.slice(0, 10);
+  if (digits.length > 6) return `${digits.slice(0, 3)}-${digits.slice(3, 6)}-${digits.slice(6)}`;
+  if (digits.length > 3) return `${digits.slice(0, 3)}-${digits.slice(3)}`;
+  return digits;
+}
+
 // '+15065550123' -> '506-555-0123' (matches how the site shows numbers).
 export function formatPhone(e164) {
   const d = e164.slice(-10);
@@ -54,7 +66,7 @@ export function validateRegistration(input = {}) {
   const name = cleanText(input.name);
   const email = cleanText(input.email).toLowerCase();
   const rawPhone = cleanText(input.phone);
-  const phone = rawPhone ? toE164(rawPhone) : null;
+  const phone = toE164(rawPhone);
   const errors = {};
 
   if (!name) errors.name = 'Please enter your full name.';
@@ -67,8 +79,10 @@ export function validateRegistration(input = {}) {
   else if (email.length > 254 || !EMAIL_PATTERN.test(email))
     errors.email = 'Please enter a valid email address, like name@example.com.';
 
-  if (rawPhone && !phone)
-    errors.phone = 'Please enter a 10-digit phone number, or leave this blank.';
+  // Required: lets the team spot a self-referral (a text from the referrer's
+  // own number) and reach the referrer about their reward.
+  if (!rawPhone) errors.phone = 'Please enter your phone number.';
+  else if (!phone) errors.phone = 'Please enter a valid 10-digit phone number.';
 
   // The page sends the terms version it displayed; a mismatch means the terms
   // changed while the page was open, so the person must review the new ones.

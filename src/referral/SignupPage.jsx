@@ -22,7 +22,7 @@ import {
   saveReferral,
 } from './savedReferral.js';
 import { smsHref } from './sms.js';
-import { FIELD_ORDER, validateRegistration } from './validation.js';
+import { FIELD_ORDER, formatPhoneInput, validateRegistration } from './validation.js';
 
 const reward = dollars(referralConfig.referrerReward);
 const discount = dollars(referralConfig.friendDiscount);
@@ -104,9 +104,9 @@ function SignupForm({ form, setForm, onRegistered, onAlreadyRegistered }) {
     fieldRefs.current[key] = element;
   };
 
-  const update = (key) => (event) => {
+  const update = (key, format = (value) => value) => (event) => {
     const { type, checked, value } = event.target;
-    setForm((prev) => ({ ...prev, [key]: type === 'checkbox' ? checked : value }));
+    setForm((prev) => ({ ...prev, [key]: type === 'checkbox' ? checked : format(value) }));
     if (errors[key]) setErrors(({ [key]: _cleared, ...rest }) => rest);
   };
 
@@ -216,16 +216,17 @@ function SignupForm({ form, setForm, onRegistered, onAlreadyRegistered }) {
           <TextField
             id="ref-phone"
             label="Phone number"
-            optional
             type="tel"
             inputMode="tel"
+            placeholder="10-digit phone number"
             value={form.phone}
-            onChange={update('phone')}
+            onChange={update('phone', formatPhoneInput)}
             error={errors.phone}
             inputRef={refFor('phone')}
             autoComplete="tel"
             enterKeyHint="done"
             maxLength={30}
+            required
           />
 
           {/* Honeypot: invisible to people and screen readers; bots fill it in. */}
@@ -286,8 +287,8 @@ function SignupForm({ form, setForm, onRegistered, onAlreadyRegistered }) {
           </button>
 
           <p className="privacy-note">
-            <strong>Your privacy:</strong> we use your name, email and optional phone number only
-            to run the referral program: to verify referrals, contact you about rewards and
+            <strong>Your privacy:</strong> we use your name, email and phone number only to run
+            the referral program: to verify referrals, contact you about rewards and
             prevent misuse. We never show your email or phone number to the people you refer,
             and joining doesn’t sign you up for marketing emails or texts.{' '}
             <a href={privacyHref} target="_blank" rel="noopener">
@@ -301,14 +302,11 @@ function SignupForm({ form, setForm, onRegistered, onAlreadyRegistered }) {
   );
 }
 
-function TextField({ id, label, optional = false, error, inputRef, ...inputProps }) {
+function TextField({ id, label, error, inputRef, ...inputProps }) {
   const errorId = `${id}-error`;
   return (
     <div className="field">
-      <label htmlFor={id}>
-        {label}
-        {optional && <span className="field__optional"> (optional)</span>}
-      </label>
+      <label htmlFor={id}>{label}</label>
       <input
         id={id}
         ref={inputRef}

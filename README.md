@@ -86,8 +86,8 @@ paid or applied only once a qualifying installation is completed and fully paid.
 | Full terms text | `src/referral/TermsPage.jsx` |
 | Database schema | `db/schema.sql` |
 
-How it works: a homeowner scans the QR code, enters their name, email and (optionally)
-phone, ticks "I have read and agree to the Referral Program Terms & Conditions", and
+How it works: a homeowner scans the QR code, enters their name, email and
+phone number, ticks "I have read and agree to the Referral Program Terms & Conditions", and
 gets a personal link. A friend who opens that link taps **Text Us**, and their own
 messaging app opens addressed to the business number with the referral code already
 in the message. Nothing is sent automatically. The team matches the code in each
